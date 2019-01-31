@@ -1,26 +1,16 @@
 # coding=utf-8
 import sys
 import traceback
-from builtins import str
-from qgis.PyQt.QtCore import QObject, QSettings, Qt
+from qgis.PyQt.QtCore import QSettings, Qt
 from qgis.PyQt.QtWidgets import QApplication
-from qgis.core import QgsProject
-from qgis.gui import QgsMessageBar
-
-from veriso.base.utils.loadlayer import LoadLayer
-
-try:
-    _encoding = QApplication.UnicodeUTF8
-
-
-    def _translate(context, text, disambig):
-        return QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QApplication.translate(context, text, disambig)
+from qgis.core import Qgis
 
 from collections import OrderedDict
 from veriso.modules.complexcheck_base import ComplexCheckBase
+
+
+def _translate(context, text, disambig):
+    return QApplication.translate(context, text, disambig)
 
 
 class ComplexCheck(ComplexCheckBase):
@@ -39,7 +29,7 @@ class ComplexCheck(ComplexCheckBase):
 
         if not project_id:
             self.message_bar.pushCritical("Error", _translate(
-                    "VeriSO_EE_Geb_Basis", "project_id not set", None))
+                "VeriSO_EE_Geb_Basis", "project_id not set", None))
             return
 
         QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -62,7 +52,7 @@ class ComplexCheck(ComplexCheckBase):
                 "style":
                     "bodenbedeckung/gebaeude_strassen_trottoir_erschliessung"
                     ".qml"
-            }
+                    }
             # Use 'LIKE' instead of 'IN' or '='. Now you can model extensions
             #  like different kinds of 'uebrige_befestigte'.
 
@@ -86,7 +76,7 @@ class ComplexCheck(ComplexCheckBase):
                 "readonly": True, "group": group,
                 "style":
                     "einzelobjekte/eo_flaeche_gebdetail_unterstand_reservoir_unterirdisch.qml"
-            }
+                    }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -99,7 +89,7 @@ class ComplexCheck(ComplexCheckBase):
                 "sql": "art_txt LIKE 'uebriger_Gebaeudeteil%'",
                 "readonly": True, "group": group,
                 "style": "einzelobjekte/eo_linie_gebdetail.qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -110,7 +100,7 @@ class ComplexCheck(ComplexCheckBase):
                 "featuretype": "gebaeudeadressen_gebnachfuehrung",
                 "key": "ogc_fid", "sql": "", "readonly": True,
                 "group": group
-            }
+                }
             # layer["geom"] = "perimeter" # Will be loaded as geometryless
             # layer.
 
@@ -124,7 +114,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "flaeche", "key": "ogc_fid", "sql": "",
                 "readonly": True, "group": group,
                 "style": "global_qml/gebaeudeadressen/benanntesgebiet_gruen.qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -136,7 +126,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "geometrie", "key": "ogc_fid", "sql": "",
                 "group": group,
                 "style": "global_qml/gebaeudeadressen/strassenachsen_gruen.qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -148,7 +138,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "anfangspunkt", "key": "ogc_fid", "sql": "",
                 "group": group,
                 "style": "global_qml/gebaeudeadressen/anfangspunkt_gruen.qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -162,7 +152,7 @@ class ComplexCheck(ComplexCheckBase):
                 "group": group,
                 "style":
                     "global_qml/gebaeudeadressen/gebaeudeeingang_blaues_viereck_mit_label.qml"
-            }
+                    }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -173,7 +163,7 @@ class ComplexCheck(ComplexCheckBase):
                 "featuretype": "v_gebaeudeadressen_hausnummerpos",
                 "geom": "pos", "key": "ogc_fid", "sql": "", "group": group,
                 "style": "global_qml/gebaeudeadressen/hausnummerpos.qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -183,7 +173,7 @@ class ComplexCheck(ComplexCheckBase):
                                     "LokalisationsName", None),
                 "featuretype": "gebaeudeadressen_lokalisationsname",
                 "key": "ogc_fid", "sql": "", "group": group
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -194,7 +184,7 @@ class ComplexCheck(ComplexCheckBase):
                 "featuretype": "t_gebaeudeadressen_lokalisationsnamepos",
                 "geom": "pos", "key": "ogc_fid", "sql": "", "group": group,
                 "style": "global_qml/gebaeudeadressen/lokalisationsnamepos.qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -206,7 +196,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "geometrie", "key": "ogc_fid", "sql": "",
                 "readonly": True, "group": group,
                 "style": "global_qml/gemeindegrenze/gemgre_strichliert.qml"
-            }
+                }
 
             gemgrelayer = self.layer_loader.load(layer)
 
@@ -220,7 +210,7 @@ class ComplexCheck(ComplexCheckBase):
             QApplication.restoreOverrideCursor()
             exc_type, exc_value, exc_traceback = sys.exc_info()
             self.message_bar.pushMessage("Error", str(
-                    traceback.format_exc(exc_traceback)),
-                                         level=QgsMessageBar.CRITICAL,
-                                         duration=0)
+                traceback.format_exc(exc_traceback)),
+                level=Qgis.Critical,
+                duration=0)
         QApplication.restoreOverrideCursor()

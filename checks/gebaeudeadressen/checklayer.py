@@ -1,25 +1,15 @@
 # coding=utf-8
 import sys
 import traceback
-from builtins import str
-from qgis.PyQt.QtCore import QObject, QSettings, Qt
+from qgis.PyQt.QtCore import QSettings, Qt
 from qgis.PyQt.QtWidgets import QApplication
-from qgis.core import QgsProject
-from qgis.gui import QgsMessageBar
-
-from veriso.base.utils.loadlayer import LoadLayer
-
-try:
-    _encoding = QApplication.UnicodeUTF8
-
-
-    def _translate(context, text, disambig):
-        return QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QApplication.translate(context, text, disambig)
+from qgis.core import Qgis
 
 from veriso.modules.complexcheck_base import ComplexCheckBase
+
+
+def _translate(context, text, disambig):
+    return QApplication.translate(context, text, disambig)
 
 
 class ComplexCheck(ComplexCheckBase):
@@ -36,7 +26,7 @@ class ComplexCheck(ComplexCheckBase):
 
         if not project_id:
             self.message_bar.pushCritical("Error", _translate(
-                    "VeriSO_EE_Geb_Check", "project_id not set", None))
+                "VeriSO_EE_Geb_Check", "project_id not set", None))
             return
 
         QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -53,7 +43,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "line", "key": "ogc_fid", "sql": "",
                 "readonly": True, "group": group,
                 "style": "global_qml/gebaeudeadressen/spinnennetz_blau.qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer, False)
 
@@ -65,7 +55,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "the_geom", "key": "ogc_fid", "sql": "",
                 "readonly": True, "group": group,
                 "style": "global_qml/gebaeudeadressen/shortestline_linie.qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -77,7 +67,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "pos", "key": "ogc_fid", "sql": "", "group": group,
                 "style":
                     "global_qml/gebaeudeadressen/shortestline_hausnummerpos.qml"
-            }
+                    }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -90,7 +80,7 @@ class ComplexCheck(ComplexCheckBase):
                 "group": group,
                 "style":
                     "global_qml/gebaeudeadressen/gebaeude_12m2_ohne_eingang.qml"
-            }
+                    }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -98,7 +88,7 @@ class ComplexCheck(ComplexCheckBase):
             QApplication.restoreOverrideCursor()
             exc_type, exc_value, exc_traceback = sys.exc_info()
             self.message_bar.pushMessage("Error", str(
-                    traceback.format_exc(exc_traceback)),
-                                         level=QgsMessageBar.CRITICAL,
-                                         duration=0)
+                traceback.format_exc(exc_traceback)),
+                level=Qgis.Critical,
+                duration=0)
         QApplication.restoreOverrideCursor()

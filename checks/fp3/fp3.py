@@ -1,25 +1,17 @@
 # coding=utf-8
 import sys
 import traceback
-from builtins import str
 from collections import OrderedDict
 from qgis.PyQt.QtCore import QSettings, Qt
 from qgis.PyQt.QtWidgets import QApplication
-from qgis.core import QgsProject
-from qgis.gui import QgsMessageBar
+from qgis.core import QgsProject, Qgis
 
 from veriso.modules.complexcheck_base import ComplexCheckBase
 from veriso.base.utils.loadlayer import LoadLayer
 
-try:
-    _encoding = QApplication.UnicodeUTF8
 
-
-    def _translate(context, text, disambig):
-        return QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QApplication.translate(context, text, disambig)
+def _translate(context, text, disambig):
+    return QApplication.translate(context, text, disambig)
 
 
 class ComplexCheck(ComplexCheckBase):
@@ -41,7 +33,7 @@ class ComplexCheck(ComplexCheckBase):
         epsg = self.settings.value("project/epsg")
 
         locale = QSettings().value('locale/userLocale')[
-                 0:2]  # this is for multilingual legends
+            0:2]  # this is for multilingual legends
 
         # If locale is different to frence or italian, german will be used.
         # Otherwise we get into troubles with the legends, e.g. locale = "en"
@@ -74,7 +66,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "geometrie", "key": "ogc_fid", "sql": "",
                 "readonly": True, "group": group,
                 "style": "tseinteilung/toleranzstufe_" + locale + ".qml"
-            }
+                }
 
             # Visibility and if legend and/or groupd should be collapsed can
             # be set with parameters in the self.layer_loader.load()
@@ -90,7 +82,7 @@ class ComplexCheck(ComplexCheckBase):
                 "featuretype": "fixpunktekategorie3_lfp3nachfuehrung",
                 "geom": "perimeter", "key": "ogc_fid", "sql": "",
                 "readonly": True, "group": group
-            }
+                }
 
             vlayer = self.layer_loader.load(layer, False, True)
 
@@ -100,7 +92,7 @@ class ComplexCheck(ComplexCheckBase):
                 "featuretype": "fixpunktekategorie3_lfp3", "geom": "geometrie",
                 "key": "ogc_fid", "sql": "", "readonly": True, "group": group,
                 "style": "fixpunkte/lfp3_" + locale + ".qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -113,7 +105,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "geometrie", "key": "ogc_fid", "sql": "",
                 "readonly": True, "group": group,
                 "style": "fixpunkte/lfp3ausserhalb.qml"
-            }
+                }
 
             vlayer = self.layer_loader.load(layer)
 
@@ -127,7 +119,7 @@ class ComplexCheck(ComplexCheckBase):
                           "ch.swisstopo.fixpunkte-lfp2",
                 "format": "image/png", "crs": "EPSG:" + str(epsg),
                 "group": group
-            }
+                }
 
             vlayer = self.layer_loader.load(layer, False, True)
 
@@ -139,7 +131,7 @@ class ComplexCheck(ComplexCheckBase):
                 "geom": "geometrie", "key": "ogc_fid", "sql": "",
                 "readonly": True, "group": group,
                 "style": "global_qml/gemeindegrenze/gemgre_strichliert.qml"
-            }
+                }
 
             gemgrelayer = self.layer_loader.load(layer)
 
@@ -160,7 +152,7 @@ class ComplexCheck(ComplexCheckBase):
             QApplication.restoreOverrideCursor()
             exc_type, exc_value, exc_traceback = sys.exc_info()
             self.message_bar.pushMessage("Error", str(
-                    traceback.format_exc(exc_traceback)),
-                                         level=QgsMessageBar.CRITICAL,
-                                         duration=0)
+                traceback.format_exc(exc_traceback)),
+                level=Qgis.Critical,
+                duration=0)
         QApplication.restoreOverrideCursor()
